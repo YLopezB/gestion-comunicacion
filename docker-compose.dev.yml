@@ -4,7 +4,7 @@ services:
     container_name: gestor-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${USER_DB}
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -22,7 +22,7 @@ services:
 
     environment:
       PORT: ${PORT_USER_SERVICE}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${USER_DB}
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
 
   frontend:
     build:

@@ -1,8 +1,7 @@
-FROM node:24-alpine AS base
+FROM node:24-alpine
 
 WORKDIR /app
 
-FROM base AS development
 COPY package*.json ./
 RUN npm install
 COPY . .
