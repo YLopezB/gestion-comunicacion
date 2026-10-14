@@ -1,5 +1,4 @@
 .env
 **node_modules
 frontend/dist/
-services/repository-service/services/auth-service
 **dist
