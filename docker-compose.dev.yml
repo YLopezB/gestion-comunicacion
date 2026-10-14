@@ -19,16 +19,39 @@ services:
       - user_node_modules:/app/node_modules
     ports:
       - "${PORT_USER_SERVICE}:${PORT_USER_SERVICE}"
-
     environment:
       PORT: ${PORT_USER_SERVICE}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
 
+  repository-service:
+    build:
+      context: ./services/repository-service
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - ./services/repository-service:/app
+      - repository_node_modules:/app/node_modules
+    ports:
+      - "${PORT_REPOSITORY_SERVICE}:${PORT_REPOSITORY_SERVICE}"
+    environment:
+      PORT: ${PORT_REPOSITORY_SERVICE}
+
+  auth-service:
+    build:
+      context: ./services/auth-service:/app
+      dockerfile: Dockerfile
+      target: development
+    volumes:
+      - .services/auth-service:/app
+      - auth_node_modules:/app/node_modules
+    ports:
+      - "{PORT_AUTH_SERVICE}:${PORT_AUTH_SERVICE}"
+    environment:
+      PORT: ${PORT_AUTH_SERVICE}
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      target: development
     volumes:
       - ./frontend:/app
       - frontend_node_modules:/app/node_modules
@@ -37,16 +60,21 @@ services:
 
   nginx:
     build:
-      context: ./nginx
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: nginx/Dockerfile
       target: development
+    restart: unless-stopped
     ports:
       - "80:80"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf
     depends_on:
-      - frontend
       - user-service
+      - repository-service
 
 volumes:
   postgres_data:
   user_node_modules:
+  repository_node_modules:
   frontend_node_modules:
+  auht_node_modules:
