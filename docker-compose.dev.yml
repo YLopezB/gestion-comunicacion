@@ -38,14 +38,14 @@ services:
 
   auth-service:
     build:
-      context: ./services/auth-service:/app
+      context: ./services/auth-service
       dockerfile: Dockerfile
       target: development
     volumes:
-      - .services/auth-service:/app
+      - ./services/auth-service:/app
       - auth_node_modules:/app/node_modules
     ports:
-      - "{PORT_AUTH_SERVICE}:${PORT_AUTH_SERVICE}"
+      - "${PORT_AUTH_SERVICE}:${PORT_AUTH_SERVICE}"
     environment:
       PORT: ${PORT_AUTH_SERVICE}
   frontend:
@@ -77,4 +77,4 @@ volumes:
   user_node_modules:
   repository_node_modules:
   frontend_node_modules:
-  auht_node_modules:
+  auth_node_modules:
