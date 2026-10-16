@@ -53,6 +53,18 @@ services:
       db:
         condition: service_healthy
 
+  company-service:
+    build:
+      context: ./services/company-service
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    environment:
+      PORT: "${PORT_COMPANY_SERVICE}"
+    depends_on:
+      db:
+        condition: service_healthy
+
   nginx:
     build:
       context: .
