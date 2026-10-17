@@ -48,6 +48,12 @@ services:
       - "${PORT_AUTH_SERVICE}:${PORT_AUTH_SERVICE}"
     environment:
       PORT: ${PORT_AUTH_SERVICE}
+      DB_HOST: db
+      DB_PORT: "${POSTGRES_PORT}"
+      AUTH_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
 
   company-service:
     build:
