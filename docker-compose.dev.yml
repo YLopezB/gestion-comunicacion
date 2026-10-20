@@ -9,6 +9,27 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  db-init:
+    image: postgres:17-alpine
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./scripts/create-databases.sh:/create-databases.sh:ro
+    command: sh /create-databases.sh
+
   user-service:
     build:
       context: ./services/user-service
@@ -21,7 +42,9 @@ services:
       - "${PORT_USER_SERVICE}:${PORT_USER_SERVICE}"
     environment:
       PORT: ${PORT_USER_SERVICE}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
 
   repository-service:
     build:
@@ -35,6 +58,9 @@ services:
       - "${PORT_REPOSITORY_SERVICE}:${PORT_REPOSITORY_SERVICE}"
     environment:
       PORT: ${PORT_REPOSITORY_SERVICE}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
 
   auth-service:
     build:
@@ -50,10 +76,12 @@ services:
       PORT: ${PORT_AUTH_SERVICE}
       DB_HOST: db
       DB_PORT: "${POSTGRES_PORT}"
-      AUTH_DB: "${POSTGRES_DB}"
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
 
   company-service:
     build:
@@ -67,6 +95,9 @@ services:
       - "${PORT_COMPANY_SERVICE}:${PORT_COMPANY_SERVICE}"
     environment:
       PORT: ${PORT_COMPANY_SERVICE}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
 
   frontend:
     build:
@@ -90,6 +121,8 @@ services:
       - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - user-service
+      - company-service
+      - auth-service
       - repository-service
 
 volumes:
