@@ -21,5 +21,5 @@ export const loginService = async (user, password) => {
     throw new Error("Usuario o contraseña incorrecto");
   }
 
-  return null;
+  return credential;
 };

@@ -1,7 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import indexRouter from "./routes/index.js";
-import { initializeAdmin } from "./db/initialize-admin.js";
+import { initializeAdmin } from "./db/initialize-db.js";
 
 const app = express();
 const PORT = process.env.PORT || 3002;

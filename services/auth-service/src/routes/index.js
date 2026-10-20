@@ -7,8 +7,6 @@ import loginRouter from "./login.js";
 
 const router = Router();
 
-// Sesiones temporales almacenadas en memoria.
-// Se pierden cuando se reinicia el servicio.
 const sessions = new Map();
 
 router.use("/", loginRouter)
