@@ -13,7 +13,7 @@ const menuItems = [
 
 export default function Sidebar() {
   return (
-    <aside className="fixed p-1 bottom-0 left-0 right-0 z-50 sm:static w-full sm:h-screen h-15 sm:w-64.5 shrink-0 gap-7 bg-grey sm:p-6 flex-col sm:flex">
+    <aside className="fixed p-1 bottom-0 left-0 right-0 z-50 sm:sticky sm:top-0 w-full sm:h-screen h-15 sm:w-64.5 gap-7 bg-grey sm:p-6 flex-col sm:flex bg-white">
       <div className="hidden sm:flex">
         <Logo />
       </div>

@@ -1,24 +1,19 @@
 import { Router } from "express";
 import { randomUUID } from "node:crypto";
+import bcrypt from "bcrypt";
+import { pool } from "../db/pool.js";
 import requireAuth from "../middleware/require-auth.js";
+import loginRouter from "./login.js";
 
 const router = Router();
 
-// Sesiones temporales almacenadas en memoria.
-// Se pierden cuando se reinicia el servicio.
 const sessions = new Map();
 
+router.use("/", loginRouter)
 // POST /auth/login
 // Inicio de sesión con credenciales temporales.
-router.post("/login", (req, res) => {
+/*router.post("/login", (req, res) => {
   const { user, password } = req.body;
-
-  // Credenciales únicamente para desarrollo.
-  if (user !== "admin" || password !== "123456") {
-    return res.status(401).json({
-      message: "Usuario o contraseña incorrectos",
-    });
-  }
 
   // Genera un identificador de sesión aleatorio.
   const sessionId = randomUUID();
@@ -41,7 +36,7 @@ router.post("/login", (req, res) => {
   return res.json({
     message: "Inicio de sesión correcto",
   });
-});
+});*/
 
 // GET /auth/me
 // Devuelve el usuario autenticado si su sesión es válida.

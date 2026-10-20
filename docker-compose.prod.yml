@@ -16,6 +16,19 @@ services:
       timeout: 5s
       retries: 5
 
+db-init:
+  image: postgres:17-alpine
+  restart: "no"
+  depends_on:
+    db:
+      condition: service_healthy
+  environment:
+    POSTGRES_USER: ${POSTGRES_USER}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  volumes:
+    - ./scripts/create-databases.sh:/create-databases.sh:ro
+  command: sh /create-databases.sh
+
   user-service:
     build:
       context: ./services/user-service
@@ -24,10 +37,9 @@ services:
     restart: unless-stopped
     environment:
       PORT: ${PORT_USER_SERVICE}
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
 
   repository-service:
     build:
@@ -38,8 +50,8 @@ services:
     environment:
       PORT: ${PORT_REPOSITORY_SERVICE}
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
 
   auth-service:
     build:
@@ -49,9 +61,26 @@ services:
     restart: unless-stopped
     environment:
       PORT: "${PORT_AUTH_SERVICE}"
+      DB_HOST: db
+      DB_PORT: "${POSTGRES_PORT}"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     depends_on:
-      db:
-        condition: service_healthy
+      db-init:
+        condition: service_completed_successfully
+
+  company-service:
+    build:
+      context: ./services/company-service
+      dockerfile: Dockerfile
+      target: production
+    restart: unless-stopped
+    environment:
+      PORT: "${PORT_COMPANY_SERVICE}"
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
 
   nginx:
     build:
@@ -63,6 +92,9 @@ services:
       - "80:80"
     depends_on:
       - user-service
+      - company-service
+      - auth-service
+      - repository-service
 
 volumes:
   postgres_data:
