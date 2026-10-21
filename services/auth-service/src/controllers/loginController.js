@@ -1,5 +1,5 @@
 import { loginService } from "../services/loginService.js";
-import { Session } from "../services/sessionService.js";
+import { createSession } from "../services/sessionService.js";
 
 export const loginController = async (req, res) => {
   const { user, password } = req.body;
@@ -12,12 +12,18 @@ export const loginController = async (req, res) => {
 
   try {
     const result = await loginService(user, password);
-    const session = await Session(result.user_id);
-    res.json({
-      user_id: result.user_id,
-      username: result.username,
-      is_active: result.is_active,
-      session: session,
+    const session = await createSession(result.user_id);
+
+    res.cookie("session", session, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+      maxAge: 10 * 60 * 1000,
+    });
+
+    res.status(200).json({
+      user: { user_id: result.user_id, is_active: result.is_active },
+      message: `Bienvenido de nuevo ${result.username}`,
     });
   } catch (err) {
     res.status(401).json({ message: err.message });

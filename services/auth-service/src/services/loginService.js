@@ -21,5 +21,9 @@ export const loginService = async (user, password) => {
     throw new Error("Usuario o contraseña incorrecto");
   }
 
+  if (!credential.is_active) {
+    throw new Error("Usuario inactivo");
+  }
+
   return credential;
 };
