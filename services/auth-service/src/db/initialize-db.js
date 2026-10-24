@@ -12,6 +12,7 @@ export async function initializeAdmin() {
     user_id UUID PRIMARY KEY DEFAULT gen_random_uuid (),
     username VARCHAR(50) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 )`,
@@ -47,9 +48,9 @@ export async function initializeAdmin() {
   const passwordHash = await bcrypt.hash(password, 12);
 
   await pool.query(
-    `INSERT INTO credentials (username, password_hash)
-     VALUES ($1, $2)`,
-    [username, passwordHash],
+    `INSERT INTO credentials (username, password_hash, is_admin)
+     VALUES ($1, $2, $3)`,
+    [username, passwordHash, true],
   );
 
   console.log("Cuenta administrativa creada correctamente.");
