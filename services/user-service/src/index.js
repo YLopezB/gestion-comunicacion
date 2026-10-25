@@ -1,12 +1,25 @@
-import express from 'express';
+import express from "express";
+import userRouter from "./routes/index.js";
+import { initializeAdmin } from "./db/initialize-db.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
-  res.send('User Service is running');
-});
+app.use(express.json());
 
-app.listen(PORT, () => {
-  console.log(`User Service is running on port ${PORT}`);
-});
+app.use("/", userRouter);
+
+async function startServer() {
+  try {
+    await initializeAdmin();
+
+    app.listen(PORT, () => {
+      console.log(`Users Service is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Error al inicializar user Service:", error);
+    process.exit(1);
+  }
+}
+
+startServer();

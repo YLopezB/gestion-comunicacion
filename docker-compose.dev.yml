@@ -42,6 +42,10 @@ services:
       - "${PORT_USER_SERVICE}:${PORT_USER_SERVICE}"
     environment:
       PORT: ${PORT_USER_SERVICE}
+      DB_HOST: db
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       db-init:
         condition: service_completed_successfully

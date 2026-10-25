@@ -9,6 +9,7 @@ const isAdmin = async (req, res, next) => {
         message: "No tiene permiso para acceder al recurso",
       });
     }
+    req.isAdmin = user.is_admin
     next();
   } catch (error) {
     res.status(500).json({
