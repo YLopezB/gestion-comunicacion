@@ -12,7 +12,6 @@ const userRouter = Router();
 
 userRouter.post("/create", requireAuth, isAdmin, createUserController);
 userRouter.post("/update", requireAuth, updateUserController);
-userRouter.post("/restart", requireAuth, isAdmin, updateUserController);
 userRouter.get("/all", requireAuth, isAdmin, allUsersController);
 userRouter.post("/active", requireAuth, isAdmin, activeUserController);
 

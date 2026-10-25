@@ -138,3 +138,27 @@ export const updateUser = async (data) => {
 
   return result.rows[0];
 };
+
+export const restarUser = async (user_id, cookie) => {
+  const user = await pool.query("SELECT * FROM users WHERE user_id = $1", [
+    user_id,
+  ]);
+  if (user.rowCount === 0) {
+    throw new Error("Usuario no existe");
+  }
+  const result = user.rows[0];
+  const response = await fetch("http://auth-service:3002/user/update", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookie,
+    },
+    body: JSON.stringify({
+      user: result.username,
+      password: result.numero_documento,
+    }),
+  });
+
+  const userId = await response.json();
+  return userId;
+};

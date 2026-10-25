@@ -1,6 +1,7 @@
 import {
   allUsers,
   createUser,
+  restarUser,
   updateUser,
   userService,
 } from "../services/userService.js";
@@ -32,28 +33,63 @@ export const createUserController = async (req, res) => {
     const userName = await createUser(req.body, req.headers.cookie);
     return res.json(userName);
   } catch (error) {
-    res.status(500).json({
+    return res.json({
       message: "Error: " + error,
     });
   }
 };
 
 export const updateserController = async (req, res) => {
-  req.body.user_id = req.auth.user_id;
-  const user = await updateUser(req.body);
-  return res.status(200).json(user);
+  try {
+    req.body.user_id = req.auth.user_id;
+    const user = await updateUser(req.body);
+    return res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error: " + error,
+    });
+  }
 };
 
 export const alluserController = async (req, res) => {
-  const users = await allUsers();
-  return res.status(200).json(users);
+  try {
+    const users = await allUsers();
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.json({
+      message: "Error: " + error,
+    });
+  }
 };
 
 export const userController = async (req, res) => {
-  const user_id = req.auth.user_id;
-  if (!user_id) {
-    return res.status(401).json({ message: "Usuario no está autenticado" });
+  try {
+    const user_id = req.auth.user_id;
+    if (!user_id) {
+      return res.status(401).json({ message: "Usuario no está autenticado" });
+    }
+    const user = await userService(user_id);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.json({
+      message: "Error: " + error,
+    });
   }
-  const user = await userService(user_id);
-  return res.status(200).json(user);
+};
+
+export const restartUserCotroller = async (req, res) => {
+  try {
+    const user_id = req.body.user_id;
+    if (!user_id) {
+      return res
+        .status(401)
+        .json({ message: "No se envió la información necesaria" });
+    }
+    const user = await restarUser(user_id, req.headers.cookie);
+    return res.status(201).json(user)
+  } catch (error) {
+    return res.json({
+      message: "Error: " + error,
+    });
+  }
 };
