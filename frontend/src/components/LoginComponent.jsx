@@ -53,10 +53,9 @@ export default function LoginComponent() {
       }
 
       // 3. Verificar la cookie y obtener los datos del usuario.
-      const user = await dispatch(fetchCurrentUser()).unwrap();
-
+      const authenticated = await dispatch(fetchCurrentUser()).unwrap();
       // 4. Entrar únicamente si Express confirma la sesión.
-      if (!user) {
+      if (!authenticated) {
         setError("No se pudo verificar la sesión");
         return;
       }

@@ -16,18 +16,18 @@ services:
       timeout: 5s
       retries: 5
 
-db-init:
-  image: postgres:17-alpine
-  restart: "no"
-  depends_on:
-    db:
-      condition: service_healthy
-  environment:
-    POSTGRES_USER: ${POSTGRES_USER}
-    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-  volumes:
-    - ./scripts/create-databases.sh:/create-databases.sh:ro
-  command: sh /create-databases.sh
+  db-init:
+    image: postgres:17-alpine
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./scripts/create-databases.sh:/create-databases.sh:ro
+    command: sh /create-databases.sh
 
   user-service:
     build:

@@ -99,6 +99,10 @@ services:
       - "${PORT_COMPANY_SERVICE}:${PORT_COMPANY_SERVICE}"
     environment:
       PORT: ${PORT_COMPANY_SERVICE}
+      DB_HOST: db
+      DB_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       db-init:
         condition: service_completed_successfully

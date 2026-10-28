@@ -1,26 +1,41 @@
 import { useState } from "react";
+import { apiFetch } from "../../service/apiFetch";
 
 export default function CreateUserModal({ onClose }) {
   const [form, setForm] = useState({
-    primerNombre: "",
-    segundoNombre: "",
-    primerApellido: "",
-    segundoApellido: "",
-    documento: "",
+    primer_nombre: "",
+    segundo_nombre: "",
+    primer_apellido: "",
+    segundo_apellido: "",
+    numero_documento: "",
     telefono: "",
-    fechaIngreso: "",
-    fechaNacimiento: "",
+    fecha_ingreso: "",
+    fecha_nacimiento: "",
     area: "",
     cargo: "",
+    correo: "",
+    nombre_contacto: "",
+    telefono_contacto: "",
   });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const sendForm = async () => {
+    await apiFetch("/api/users/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+    onClose();
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-lg p-6 flex flex-col gap-6">
+      <div className="bg-white rounded-2xl w-full max-w-198 p-6 flex flex-col gap-6">
         {/* Título */}
         <h2 className="text-[16px] font-bold text-[#203338]">
           Datos de la persona
@@ -31,8 +46,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Primer nombre" required>
             <input
               type="text"
-              name="primerNombre"
-              value={form.primerNombre}
+              name="primer_nombre"
+              value={form.primer_nombre}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -41,8 +56,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Segundo nombre">
             <input
               type="text"
-              name="segundoNombre"
-              value={form.segundoNombre}
+              name="segundo_nombre"
+              value={form.segundo_nombre}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -51,8 +66,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Primer apellido" required>
             <input
               type="text"
-              name="primerApellido"
-              value={form.primerApellido}
+              name="primer_apellido"
+              value={form.primer_apellido}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -61,8 +76,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Segundo apellido">
             <input
               type="text"
-              name="segundoApellido"
-              value={form.segundoApellido}
+              name="segundo_apellido"
+              value={form.segundo_apellido}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -71,8 +86,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Número de documento" required>
             <input
               type="text"
-              name="documento"
-              value={form.documento}
+              name="numero_documento"
+              value={form.numero_documento}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -91,8 +106,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Fecha de ingreso" required>
             <input
               type="date"
-              name="fechaIngreso"
-              value={form.fechaIngreso}
+              name="fecha_ingreso"
+              value={form.fecha_ingreso}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -101,8 +116,8 @@ export default function CreateUserModal({ onClose }) {
           <Field label="Fecha de nacimiento" required>
             <input
               type="date"
-              name="fechaNacimiento"
-              value={form.fechaNacimiento}
+              name="fecha_nacimiento"
+              value={form.fecha_nacimiento}
               onChange={handleChange}
               className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
             />
@@ -135,44 +150,61 @@ export default function CreateUserModal({ onClose }) {
               <option value="gerente">Gerente</option>
             </select>
           </Field>
+
+          <Field label="Nombre de contacto para emergencias">
+            <input
+              type="text"
+              name="nombre_contacto"
+              value={form.nombre_contacto}
+              onChange={handleChange}
+              className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
+            />
+          </Field>
+
+          <Field label="Teléfono del contacto">
+            <input
+              type="tel"
+              name="telefono_contacto"
+              value={form.telefono_contacto}
+              onChange={handleChange}
+              className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
+            />
+          </Field>
         </div>
 
-        {/* Foto de perfil */}
-        <div className="flex flex-col gap-2">
-          <p className="text-[12px] font-semibold text-[#203338]">
-            Foto de perfil{" "}
-            <span className="text-[#677779] font-normal">(opcional)</span>
-          </p>
-          <div className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-300 rounded-xl p-6 bg-[#F5F4EF]">
-            <p className="text-[11px] text-[#677779]">
-              JPG o PNG · Máximo 5 MB
-            </p>
-            <button className="text-[12px] text-[#184F5B] font-semibold">
-              Seleccionar archivo
-            </button>
-          </div>
-        </div>
+        <Field label="Correo" required>
+          <input
+            type="email"
+            name="correo"
+            value={form.correo}
+            onChange={handleChange}
+            className="w-full bg-white p-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#184F5B]"
+          />
+        </Field>
 
         {/* Info */}
-        <div className="flex flex-col gap-1 p-4 bg-[#EEF4F3] rounded-xl">
-          <p className="text-[12px] text-[#184F5B]">
-            El cargo define su lugar en el organigrama. El área al lugar donde
-            pertenece.
-          </p>
-          <p className="text-[12px] text-[#184F5B]">
-            {form.primerNombre || "El usuario"} creará su contraseña al aceptar
-            la invitación. No necesitas asignar una contraseña inicial.
-          </p>
-        </div>
+        <p className="text-[12px] text-[#184F5B]">
+          El cargo define su lugar en el organigrama. El área al lugar donde
+          pertenece.
+        </p>
+        <p className="text-[12px] text-[#184F5B]">
+          Para {form.primer_nombre || "el usuario"} el sistema le creará un
+          usurario y la contraseña para ingresar será su número de documento la
+          primera vez, luego se solicitará a{" "}
+          {form.primer_nombre || "el usuario"} cambiarla.
+        </p>
 
         {/* Botones */}
         <div className="flex gap-3">
-          <button className="bg-[#184F5B] text-white px-5 py-3 rounded-lg text-[14px] font-semibold hover:bg-[#133d47] transition-colors">
+          <button
+            className="bg-[#184F5B] text-white px-5 py-3 rounded-lg text-[14px] font-semibold hover:bg-[#133d47] transition-colors cursor-pointer"
+            onClick={sendForm}
+          >
             Crear usuario
           </button>
           <button
             onClick={onClose}
-            className="bg-white text-[#203338] px-5 py-3 rounded-lg text-[14px] font-semibold border border-gray-300 hover:bg-gray-50 transition-colors"
+            className="bg-white text-[#203338] px-5 py-3 rounded-lg text-[14px] font-semibold border border-gray-300 hover:bg-gray-50 transition-colors cursor-pointer"
           >
             Cancelar
           </button>
@@ -189,7 +221,7 @@ export default function CreateUserModal({ onClose }) {
 function Field({ label, required, children }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-[11px] font-semibold text-[#203338]">
+      <label className="text-[11px] text-[#203338]">
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       {children}

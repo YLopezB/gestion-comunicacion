@@ -19,8 +19,9 @@ export async function initializeAdmin() {
     area TEXT NOT NULL,
     nombre_contacto TEXT,
     telefono_contacto TEXT,
-    foto TEXT DEFAULT 'api/repository/foto/foto.jpg',
-    firma TEXT DEFAULT NULL
+    foto TEXT DEFAULT '/api/repository/foto/foto.jpg',
+    firma TEXT DEFAULT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
 )`,
     );
   } catch (error) {

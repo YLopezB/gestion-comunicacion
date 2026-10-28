@@ -21,7 +21,7 @@ export const fetchCurrentUser = createAsyncThunk(
       }
 
       const data = await response.json();
-      return data.user;
+      return data.authenticated;
     } catch {
       return rejectWithValue("No se pudo conectar con el servidor");
     }

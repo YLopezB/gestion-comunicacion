@@ -1,4 +1,4 @@
-export default function SearchInput({ placeholder, name }) {
+export default function SearchInput({ placeholder, name, value, onChange }) {
   return (
     <div className="w-full bg-white p-3.25 rounded-lg border border-gray-300">
       <p className="text-[10px] text-[#677779]">{name}</p>
@@ -6,6 +6,8 @@ export default function SearchInput({ placeholder, name }) {
         type="text"
         placeholder={placeholder}
         className="text-[14px] text-[#203338] w-full p-1 border border-gray-300 rounded-lg"
+        value={value}
+        onChange={onChange}
       />
     </div>
   );
