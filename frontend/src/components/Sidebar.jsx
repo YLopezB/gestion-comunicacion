@@ -8,7 +8,6 @@ const menuItems = [
   { label: "Publicaciones", path: "publicaciones" },
   { label: "Organigrama", path: "organigrama" },
   { label: "Empresa", path: "empresa" },
-  { label: "Contraseña", path: "contrasena" },
 ];
 
 export default function Sidebar() {
@@ -50,6 +49,15 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+      <hr className="h-px border-0.5 border-gray-300" />
+      <div>
+        <p className="text-[#677779] hover:text-[#184F5B] text-[12px] cursor-pointer">
+          Cambiar Contraseña
+        </p>
+        <p className="text-[#677779] hover:text-[#184F5B] text-[12px] cursor-pointer">
+          Cerrar sesión
+        </p>
+      </div>
 
       <div className="hidden sm:mt-auto sm:flex sm:flex-col sm:gap-7">
         <hr className="h-px border-0.5 border-gray-300" />

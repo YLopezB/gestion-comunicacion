@@ -117,7 +117,7 @@ export const updateUser = async (data) => {
        nombre_contacto = $13,
        telefono_contacto = $14
    WHERE user_id = $1
-   RETURNING user_id, username, primer_nombre, segundo_apellido`,
+   RETURNING user_id, username, primer_nombre, primer_apellido`,
     [
       user_id,
       primer_nombre,
@@ -135,7 +135,6 @@ export const updateUser = async (data) => {
       telefono_contacto ?? null,
     ],
   );
-
   return result.rows[0];
 };
 
@@ -154,6 +153,7 @@ export const restarUser = async (user_id, cookie) => {
       Cookie: cookie,
     },
     body: JSON.stringify({
+      user_id: result.user_id,
       user: result.username,
       password: result.numero_documento,
     }),
@@ -161,4 +161,30 @@ export const restarUser = async (user_id, cookie) => {
 
   const userId = await response.json();
   return userId;
+};
+
+export const isActiveUser = async (body, cookie) => {
+  const user = await pool.query(`SELECT * FROM users WHERE user_id = $1`, [
+    body.userId,
+  ]);
+  await pool.query("UPDATE users SET is_active = $1 WHERE user_id = $2", [
+    body.isActive,
+    body.userId,
+  ]);
+  const response = await fetch("http://auth-service:3002/user/active", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Cookie: cookie,
+    },
+    body: JSON.stringify({
+      userId: body.userId,
+      isActive: body.isActive,
+    }),
+  });
+  if (user.rowCount === 0) {
+    throw new Error("Usuario no existe");
+  }
+  const userReponse = await response.json();
+  return userReponse;
 };

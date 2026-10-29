@@ -4,6 +4,7 @@ import {
   restarUser,
   updateUser,
   userService,
+  isActiveUser,
 } from "../services/userService.js";
 
 export const createUserController = async (req, res) => {
@@ -31,7 +32,10 @@ export const createUserController = async (req, res) => {
   }
   try {
     const userName = await createUser(req.body, req.headers.cookie);
-    return res.json(userName);
+    return res.json({
+      user: userName,
+      message: "Usuario " + userName.username + " creado con éxito",
+    });
   } catch (error) {
     return res.json({
       message: "Error: " + error,
@@ -41,9 +45,11 @@ export const createUserController = async (req, res) => {
 
 export const updateserController = async (req, res) => {
   try {
-    req.body.user_id = req.auth.user_id;
     const user = await updateUser(req.body);
-    return res.status(201).json(user);
+    return res.status(201).json({
+      user: user,
+      message: "Usuario " + user.username + " actualizado con éxito",
+    });
   } catch (error) {
     res.status(500).json({
       message: "Error: " + error,
@@ -86,7 +92,20 @@ export const restartUserCotroller = async (req, res) => {
         .json({ message: "No se envió la información necesaria" });
     }
     const user = await restarUser(user_id, req.headers.cookie);
-    return res.status(201).json(user)
+    return res.status(201).json(user);
+  } catch (error) {
+    return res.json({
+      message: "Error: " + error,
+    });
+  }
+};
+
+export const isActiveUserController = async (req, res) => {
+  try {
+    const user = await isActiveUser(req.body, req.headers.cookie);
+    return res
+      .status(201)
+      .json({ user: user, message: "Usuario Actualizado con éxito" });
   } catch (error) {
     return res.json({
       message: "Error: " + error,

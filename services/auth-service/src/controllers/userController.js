@@ -39,8 +39,14 @@ export const createUserController = async (req, res) => {
 
 export const updateUserController = async (req, res) => {
   try {
+    const { user_id } = req.body;
     const { password } = req.body;
-    const { userId } = req;
+    let userId;
+    if (user_id) {
+      userId = user_id;
+    } else {
+      userId = req.userId;
+    }
     if (!password || !userId) {
       res.status(400).json({
         message: "Debe ingresar una contraseña válida",
@@ -49,7 +55,10 @@ export const updateUserController = async (req, res) => {
     const user = await updateUser(userId, password);
 
     res.status(201).json({
-      message: user.username + ", contraseña cambiada correctamente",
+      message:
+        "Usuario " +
+        user.username +
+        " ha sido restaurado, la contraseña es el número de documento.",
     });
   } catch (error) {
     res.status(500).json({

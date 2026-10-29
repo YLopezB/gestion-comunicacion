@@ -8,7 +8,7 @@ import MainUsers from "../../components/MainUsers";
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../service/apiFetch";
 import Loading from "../../components/Loading";
-import CreateUserModal from "../../components/modals/CreateUserModal";
+import CreateUserModal from "../../components/modals/UserModal";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -19,6 +19,9 @@ export default function UsersPage() {
   const [searchArea, setSearchArea] = useState("");
 
   const [modalCreateUser, setModalCreateUser] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const [active, setActive] = useState(false);
 
   const firstFilter = users.filter(
     (user) =>
@@ -50,7 +53,37 @@ export default function UsersPage() {
       setLoading(false);
     }
     getUsers();
-  }, [modalCreateUser]);
+  }, [modalCreateUser, active]);
+
+  const handleActive = async (u) => {
+    const response = await apiFetch("/api/users/isactive", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId: u.user_id,
+        isActive: !u.is_active,
+      }),
+    });
+    setActive(!active);
+    alert(response.message);
+  };
+
+  const handleRestart = async (id) => {
+    console.log(id)
+    const response = await apiFetch("/api/users/restart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: id,
+      }),
+    });
+    alert(response.message);
+    setActive(!active);
+  };
 
   if (loading) {
     return <Loading />;
@@ -63,7 +96,10 @@ export default function UsersPage() {
         <BtnCrear
           icon={userPlusIcon}
           name="Crear Usuario"
-          onClick={() => setModalCreateUser(true)}
+          onClick={() => {
+            setSelectedUser(null);
+            setModalCreateUser(true);
+          }}
         />
       </div>
       <HeaderUsers users={users} />
@@ -97,10 +133,22 @@ export default function UsersPage() {
           />
         </div>
         <hr className="h-px border-0.5 border-gray-300" />
-        <MainUsers users={secondFilter} />
+        <MainUsers
+          users={secondFilter}
+          onEdit={(user) => {
+            setSelectedUser(user);
+            setModalCreateUser(true);
+          }}
+          handleActive={handleActive}
+          handleRestart={handleRestart}
+        />
       </div>
       {modalCreateUser && (
-        <CreateUserModal onClose={() => setModalCreateUser(false)} />
+        <CreateUserModal
+          key={selectedUser?.user_id ?? "new-user"}
+          user={selectedUser}
+          onClose={() => setModalCreateUser(false)}
+        />
       )}
     </div>
   );

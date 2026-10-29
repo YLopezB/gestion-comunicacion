@@ -53,7 +53,6 @@ export const activeUsers = async (userId, isActive) => {
     `UPDATE credentials SET is_active = $1 WHERE user_id = $2 RETURNING user_id, username, is_active`,
     [isActive, userId],
   );
-
   if (user.rowCount > 0) {
     return user.rows[0];
   }

@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { apiFetch } from "../../service/apiFetch";
+import CardUser from "../cards/CardUser";
 
-export default function CreateUserModal({ onClose }) {
+export default function CreateUserModal({ onClose, user = null }) {
   const [form, setForm] = useState({
-    primer_nombre: "",
-    segundo_nombre: "",
-    primer_apellido: "",
-    segundo_apellido: "",
-    numero_documento: "",
-    telefono: "",
-    fecha_ingreso: "",
-    fecha_nacimiento: "",
-    area: "",
-    cargo: "",
-    correo: "",
-    nombre_contacto: "",
-    telefono_contacto: "",
+    primer_nombre: user?.primer_nombre ?? "",
+    segundo_nombre: user?.segundo_nombre ?? "",
+    primer_apellido: user?.primer_apellido ?? "",
+    segundo_apellido: user?.segundo_apellido ?? "",
+    numero_documento: user?.numero_documento ?? "",
+    telefono: user?.telefono ?? "",
+    fecha_ingreso: user?.fecha_ingreso?.slice(0, 10) ?? "",
+    fecha_nacimiento: user?.fecha_nacimiento?.slice(0, 10) ?? "",
+    area: user?.area ?? "",
+    cargo: user?.cargo ?? "",
+    correo: user?.correo ?? "",
+    nombre_contacto: user?.nombre_contacto ?? "",
+    telefono_contacto: user?.telefono_contacto ?? "",
   });
 
   const handleChange = (e) => {
@@ -23,13 +24,28 @@ export default function CreateUserModal({ onClose }) {
   };
 
   const sendForm = async () => {
-    await apiFetch("/api/users/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    });
+    let response;
+    if (!user) {
+      response = await apiFetch("/api/users/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
+      });
+    } else {
+      response = await apiFetch("/api/users/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...form,
+          user_id: user.user_id,
+        }),
+      });
+    }
+    alert(response.message);
     onClose();
   };
 
@@ -37,9 +53,18 @@ export default function CreateUserModal({ onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-2xl w-full max-w-198 p-6 flex flex-col gap-6">
         {/* Título */}
-        <h2 className="text-[16px] font-bold text-[#203338]">
-          Datos de la persona
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="text-[16px] font-bold text-[#203338]">
+            Datos de la persona
+          </h2>
+          {user && (
+            <CardUser
+              nombre={user.username}
+              cargo={user.cargo}
+              foto={user.foto}
+            />
+          )}
+        </div>
 
         {/* Campos en grid de 2 columnas */}
         <div className="grid grid-cols-2 gap-4">
@@ -187,12 +212,16 @@ export default function CreateUserModal({ onClose }) {
           El cargo define su lugar en el organigrama. El área al lugar donde
           pertenece.
         </p>
-        <p className="text-[12px] text-[#184F5B]">
-          Para {form.primer_nombre || "el usuario"} el sistema le creará un
-          usurario y la contraseña para ingresar será su número de documento la
-          primera vez, luego se solicitará a{" "}
-          {form.primer_nombre || "el usuario"} cambiarla.
-        </p>
+        {user ? (
+          ""
+        ) : (
+          <p className="text-[12px] text-[#184F5B]">
+            Para {form.primer_nombre || "el usuario"} el sistema le creará un
+            usurario y la contraseña para ingresar será su número de documento
+            la primera vez, luego se solicitará a{" "}
+            {form.primer_nombre || "el usuario"} cambiarla.
+          </p>
+        )}
 
         {/* Botones */}
         <div className="flex gap-3">
@@ -200,7 +229,7 @@ export default function CreateUserModal({ onClose }) {
             className="bg-[#184F5B] text-white px-5 py-3 rounded-lg text-[14px] font-semibold hover:bg-[#133d47] transition-colors cursor-pointer"
             onClick={sendForm}
           >
-            Crear usuario
+            {!user ? "Crear usuario" : "Modificar usuario"}
           </button>
           <button
             onClick={onClose}

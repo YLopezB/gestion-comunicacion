@@ -6,7 +6,8 @@ import {
   alluserController,
   userController,
   updateserController,
-  restartUserCotroller
+  restartUserCotroller,
+  isActiveUserController
 } from "../controllers/userController.js";
 
 const userRouter = Router();
@@ -16,5 +17,6 @@ userRouter.get("/all", requireAuth, alluserController);
 userRouter.get("/user", requireAuth, userController);
 userRouter.post("/update", requireAuth, updateserController);
 userRouter.post("/restart", requireAuth, isAdmin, restartUserCotroller)
+userRouter.post("/isactive", requireAuth, isAdmin, isActiveUserController)
 
 export default userRouter;
