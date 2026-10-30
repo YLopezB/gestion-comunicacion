@@ -82,6 +82,12 @@ services:
     restart: unless-stopped
     environment:
       PORT: "${PORT_COMPANY_SERVICE}"
+      DB_HOST: db
+      DB_PORT: "${POSTGRES_PORT}"
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      NAME_COMPANY: ${NAME_COMPANY}
+      SLOGAN_COMPANY: ${SLOGAN_COMPANY}
     depends_on:
       db-init:
         condition: service_completed_successfully

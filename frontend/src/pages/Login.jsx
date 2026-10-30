@@ -1,14 +1,17 @@
+import { useSelector } from "react-redux";
 import CopyRight from "../components/CopyRight.jsx";
 import LoginComponent from "../components/LoginComponent.jsx";
 import Logo from "../components/Logo.jsx";
 
 export default function Login() {
+  const company = useSelector((state) => state.company);
+
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4 py-10 max-w-360 m-auto">
       <div
         className="absolute inset-0 bg-center bg-cover"
         style={{
-          backgroundImage: `url(/api/repository/default/index_image.png)`,
+          backgroundImage: `url(${company.company.photo})`,
         }}
       />
 

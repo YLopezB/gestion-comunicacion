@@ -9,11 +9,12 @@ import PublicRoute from "./components/PublicRoute.jsx";
 import Home from "./pages/Home.jsx";
 import GlobalLoading from "./components/GlobalLoading.jsx";
 import { useSelector } from "react-redux";
-import UsersPage from "./pages/Home/UsersPage.jsx"
-import AreasPage from "./pages/Home/AreasPage.jsx"
-import PublicationsPage from "./pages/Home/PublicationsPage.jsx"
-import OrganizationPage from "./pages/Home/OrganizationPage.jsx"
-import CompanyPage from "./pages/Home/CompanyPage.jsx"
+import UsersPage from "./pages/Home/UsersPage.jsx";
+import AreasPage from "./pages/Home/AreasPage.jsx";
+import PublicationsPage from "./pages/Home/PublicationsPage.jsx";
+import OrganizationPage from "./pages/Home/OrganizationPage.jsx";
+import CompanyPage from "./pages/Home/CompanyPage.jsx";
+import { fetchCompany } from "./features/company/companySlice.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ function App() {
   const isLoading = useSelector((state) => state.ui.pendingRequests > 0);
 
   useEffect(() => {
+    dispatch(fetchCompany());
     dispatch(fetchCurrentUser());
   }, [dispatch]);
 

@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import Copyright from "./CopyRight.jsx";
 import Logo from "./Logo.jsx";
+import { useSelector } from "react-redux";
 
 const menuItems = [
   { label: "Usuarios", path: "usuarios" },
@@ -11,6 +12,7 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
+  const company = useSelector((state) => state.company);
   return (
     <aside className="fixed p-1 bottom-0 left-0 right-0 z-50 sm:sticky sm:top-0 w-full sm:h-screen h-15 sm:w-64.5 gap-7 bg-grey sm:p-6 flex-col sm:flex bg-white">
       <div className="hidden sm:flex">
@@ -18,9 +20,9 @@ export default function Sidebar() {
       </div>
       <div className="sm:flex sm:flex-col hidden gap-1.5">
         <h2 className="text-sm font-bold text-[#203338]">
-          Nombre de tu empresa
+          {company.company.name}
         </h2>
-        <p className="text-xs text-[#677779]">Eslogan empresarial</p>
+        <p className="text-xs text-[#677779]">{company.company.slogan}</p>
       </div>
 
       <p className="text-[10px] font-semibold text-[#677779] hidden sm:block">

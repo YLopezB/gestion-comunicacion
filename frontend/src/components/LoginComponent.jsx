@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { fetchCurrentUser } from "../features/auth/authSlice.js";
 import { apiFetch } from "../service/api.js";
 
@@ -15,6 +15,7 @@ export default function LoginComponent() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const company = useSelector((state) => state.company);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -70,12 +71,14 @@ export default function LoginComponent() {
 
   return (
     <section className="w-full rounded-2xl bg-white p-7 shadow-2xl sm:p-9">
-      <p className="text-xs font-semibold text-teal-900">Nombre de empresa</p>
+      <p className="text-xs font-semibold text-teal-900">
+        {company.company.name}
+      </p>
 
-      <p className="mt-2 text-sm text-slate-500">Eslogan de tu empresa</p>
+      <p className="mt-2 text-sm text-slate-500">{company.company.slogan}</p>
 
       <h1 className="mt-4 text-2xl font-bold text-slate-800">
-        Qué bueno verte.
+        Qué bueno verte de nuevo.
       </h1>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-5">

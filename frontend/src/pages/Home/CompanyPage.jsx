@@ -2,8 +2,25 @@ import SearchInput from "../../components/filters/SearchInput";
 import Title from "../../components/Title";
 import Icono from "../../assets/icons/Icono.svg";
 import BtnUpload from "../../components/buttons/BtnUpload";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function CompanyPage() {
+  const company = useSelector((state) => state.company);
+  const [form, setForm] = useState({
+    name: company.company.name,
+    slogan: company.company.slogan,
+    photo: company.company.photo,
+    logo: company.company.logo,
+  });
+
+  const handleChange = (e) => {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  };
+
   return (
     <div className="flex gap-5.75 flex-col">
       <Title ruta="ADMINISTRACIÓN/Empresa" title="Editar empresa" />
@@ -12,7 +29,9 @@ export default function CompanyPage() {
           <div className="flex flex-col gap-5 rounded-[14px] bg-white p-6">
             <SearchInput
               placeholder="Nombre empresa S.A.S"
-              name="Nombre de la empresa"
+              name="name"
+              value={form.name}
+              onChange={handleChange}
             />
             <div className="flex justify-between text-[11px] text-[#677779]">
               <p>Usa el nombre comercial de tu empresa.</p>
@@ -21,8 +40,10 @@ export default function CompanyPage() {
           </div>
           <div className="flex flex-col rounded-[14px] bg-white p-6">
             <SearchInput
-              placeholder="Eslogan empresa S.A.S"
-              name="Eslogan de la empresa"
+              placeholder="Eslogan de la empresa"
+              name="slogan"
+              value={form.slogan}
+              onChange={handleChange}
             />
           </div>
           <div className="flex flex-col rounded-[14px] bg-white p-6 gap-4">
@@ -97,10 +118,7 @@ export default function CompanyPage() {
           <p className="text-[11px] text-[#677779]">HEX</p>
         </div>
         <div className="flex gap-3 p-3 border border-gray-300 justify-between items-center rounded-lg">
-          <input
-            type="color"
-            className="h-9.5 w-9.5 cursor-pointer rounded"
-          />
+          <input type="color" className="h-9.5 w-9.5 cursor-pointer rounded" />
           <div className="w-full">
             <p className="text-[11px] text-[#677779]">Color Secundario</p>
             <p className="text-[14px]">#D9E8E4</p>

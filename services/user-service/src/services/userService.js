@@ -158,33 +158,46 @@ export const restarUser = async (user_id, cookie) => {
       password: result.numero_documento,
     }),
   });
-
+  if (!response) {
+    throw new Error("Error interno del servidor ");
+  }
   const userId = await response.json();
   return userId;
 };
 
 export const isActiveUser = async (body, cookie) => {
-  const user = await pool.query(`SELECT * FROM users WHERE user_id = $1`, [
-    body.userId,
-  ]);
-  await pool.query("UPDATE users SET is_active = $1 WHERE user_id = $2", [
-    body.isActive,
-    body.userId,
-  ]);
-  const response = await fetch("http://auth-service:3002/user/active", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookie,
-    },
-    body: JSON.stringify({
-      userId: body.userId,
-      isActive: body.isActive,
-    }),
-  });
+  const user = await pool.query(
+    "SELECT * FROM users WHERE user_id = $1",
+    [body.userId],
+  );
+
   if (user.rowCount === 0) {
     throw new Error("Usuario no existe");
   }
-  const userReponse = await response.json();
-  return userReponse;
+
+  await pool.query(
+    "UPDATE users SET is_active = $1 WHERE user_id = $2",
+    [body.isActive, body.userId],
+  );
+
+  const response = await fetch(
+    "http://auth-service:3002/user/active",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: cookie,
+      },
+      body: JSON.stringify({
+        userId: body.userId,
+        isActive: body.isActive,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("No se pudo actualizar el estado en Auth Service");
+  }
+
+  return await response.json();
 };

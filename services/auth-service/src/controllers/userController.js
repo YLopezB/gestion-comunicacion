@@ -61,8 +61,9 @@ export const updateUserController = async (req, res) => {
         " ha sido restaurado, la contraseña es el número de documento.",
     });
   } catch (error) {
+    console.log("Ha ocurrido un error en updateUserController: " + error);
     res.status(500).json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -72,8 +73,9 @@ export const allUsersController = async (req, res) => {
     const users = await allUsers();
     res.status(200).json(users);
   } catch (error) {
+    consoler.log("Ha ocurrido un error en el allUsersController: " + error);
     res.status(500).json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -82,15 +84,16 @@ export const activeUserController = async (req, res) => {
   try {
     const { userId, isActive } = req.body;
     if (!userId || !isActive) {
-      res.status(400).json({
+      return res.status(400).json({
         message: "No se envío información",
       });
     }
     const user = await activeUsers(userId, isActive);
     res.status(200).json(user);
   } catch (error) {
+    console.log("Ha ocurrido error en activeUserController: " + error);
     res.status(500).json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };

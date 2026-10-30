@@ -37,8 +37,9 @@ export const createUserController = async (req, res) => {
       message: "Usuario " + userName.username + " creado con éxito",
     });
   } catch (error) {
+    console.log("Ha ocurrido un error en createUser: " + error);
     return res.json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -51,8 +52,9 @@ export const updateserController = async (req, res) => {
       message: "Usuario " + user.username + " actualizado con éxito",
     });
   } catch (error) {
+    console.log("Ha ocurrido un error en updateserController: " + error);
     res.status(500).json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -62,8 +64,9 @@ export const alluserController = async (req, res) => {
     const users = await allUsers();
     return res.status(200).json(users);
   } catch (error) {
+    console.log("Ha ocurrido un error en alluserController: " + error);
     return res.json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -77,8 +80,9 @@ export const userController = async (req, res) => {
     const user = await userService(user_id);
     return res.status(200).json(user);
   } catch (error) {
+    console.log("Ha ocurrido un error en userController: " + error);
     return res.json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -94,8 +98,9 @@ export const restartUserCotroller = async (req, res) => {
     const user = await restarUser(user_id, req.headers.cookie);
     return res.status(201).json(user);
   } catch (error) {
+    console.log("Ha ocurrido un error en restartUserCotroller: " + error);
     return res.json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
@@ -107,8 +112,9 @@ export const isActiveUserController = async (req, res) => {
       .status(201)
       .json({ user: user, message: "Usuario Actualizado con éxito" });
   } catch (error) {
+    console.log("Ha ocurrido un error en isActiveUserController: " + error);
     return res.json({
-      message: "Error: " + error,
+      message: "Error interno del servidor",
     });
   }
 };
