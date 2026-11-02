@@ -55,6 +55,7 @@ export default function LoginComponent() {
 
       // 3. Verificar la cookie y obtener los datos del usuario.
       const authenticated = await dispatch(fetchCurrentUser()).unwrap();
+      console.log(authenticated);
       // 4. Entrar únicamente si Express confirma la sesión.
       if (!authenticated) {
         setError("No se pudo verificar la sesión");
@@ -72,10 +73,12 @@ export default function LoginComponent() {
   return (
     <section className="w-full rounded-2xl bg-white p-7 shadow-2xl sm:p-9">
       <p className="text-xs font-semibold text-teal-900">
-        {company.company.name}
+        {company.company ? company.company.name : "Nombre de la empresa"}
       </p>
 
-      <p className="mt-2 text-sm text-slate-500">{company.company.slogan}</p>
+      <p className="mt-2 text-sm text-slate-500">
+        {company.company ? company.company.slogan : "Slogan de la empresa"}
+      </p>
 
       <h1 className="mt-4 text-2xl font-bold text-slate-800">
         Qué bueno verte de nuevo.

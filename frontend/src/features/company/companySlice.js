@@ -1,18 +1,43 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { apiFetch } from "../../service/apiFetch.js";
+import { apiFetch } from "../../service/api.js";
 
 export const fetchCompany = createAsyncThunk(
   "company/fetchCompany",
-  async (_, { rejectWithValue }) => {
+  async (_, { dispatch, rejectWithValue }) => {
     try {
-      const response = await apiFetch("/api/company/profile", {
-        method: "GET",
-      });
-
-      return response;
+      return await apiFetch(
+        "/api/company/profile",
+        { method: "GET" },
+        dispatch,
+      );
     } catch (error) {
       return rejectWithValue(
         error.message || "No se pudo consultar la empresa",
+      );
+    }
+  },
+);
+
+export const updateCompany = createAsyncThunk(
+  "company/updateCompany",
+  async (form, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await apiFetch(
+        "/api/company/profile",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        },
+        dispatch,
+      );
+
+      return response.profile;
+    } catch (error) {
+      return rejectWithValue(
+        error.message || "No se pudo actualizar la empresa",
       );
     }
   },
@@ -46,6 +71,18 @@ const companySlice = createSlice({
       })
       .addCase(fetchCompany.rejected, (state, action) => {
         state.company = null;
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(updateCompany.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateCompany.fulfilled, (state, action) => {
+        state.company = action.payload;
+        state.status = "succeeded";
+      })
+      .addCase(updateCompany.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

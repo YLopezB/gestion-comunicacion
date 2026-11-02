@@ -16,12 +16,13 @@ export const fetchCurrentUser = createAsyncThunk(
         return null;
       }
 
-      if (!response.ok) {
-        return rejectWithValue("No se pudo verificar la sesión");
+      if (!response.authenticated) {
+        return rejectWithValue(
+          "Usuario no autenticado, vuelva a iniciar sesión",
+        );
       }
 
-      const data = await response.json();
-      return data.authenticated;
+      return response;
     } catch {
       return rejectWithValue("No se pudo conectar con el servidor");
     }
@@ -52,7 +53,9 @@ const authSlice = createSlice({
       })
       .addCase(fetchCurrentUser.fulfilled, (state, action) => {
         state.user = action.payload;
-        state.status = action.payload ? "authenticated" : "unauthenticated";
+        state.status = action.payload.authenticated
+          ? "authenticated"
+          : "unauthenticated";
       })
       .addCase(fetchCurrentUser.rejected, (state, action) => {
         state.user = null;

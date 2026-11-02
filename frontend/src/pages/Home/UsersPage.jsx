@@ -6,13 +6,13 @@ import FilterSelect from "../../components/filters/FilterSelect";
 import HeaderUsers from "../../components/HeaderUsers";
 import MainUsers from "../../components/MainUsers";
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../service/apiFetch";
-import Loading from "../../components/Loading";
+import { apiFetch } from "../../service/api.js";
 import CreateUserModal from "../../components/modals/UserModal";
+import { useDispatch } from "react-redux";
 
 export default function UsersPage() {
+  const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
@@ -48,46 +48,49 @@ export default function UsersPage() {
 
   useEffect(() => {
     async function getUsers() {
-      const result = await apiFetch("/api/users/all");
+      const result = await apiFetch("/api/users/all", {}, dispatch);
       setUsers(result);
-      setLoading(false);
     }
     getUsers();
-  }, [modalCreateUser, active]);
+  }, [modalCreateUser, active, dispatch]);
 
   const handleActive = async (u) => {
-    const response = await apiFetch("/api/users/isactive", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await apiFetch(
+      "/api/users/isactive",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: u.user_id,
+          isActive: !u.is_active,
+        }),
       },
-      body: JSON.stringify({
-        userId: u.user_id,
-        isActive: !u.is_active,
-      }),
-    });
+      dispatch,
+    );
     setActive(!active);
     alert(response.message);
   };
 
   const handleRestart = async (id) => {
-    console.log(id)
-    const response = await apiFetch("/api/users/restart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    console.log(id);
+    const response = await apiFetch(
+      "/api/users/restart",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: id,
+        }),
       },
-      body: JSON.stringify({
-        user_id: id,
-      }),
-    });
+      dispatch,
+    );
     alert(response.message);
     setActive(!active);
   };
-
-  if (loading) {
-    return <Loading />;
-  }
 
   return (
     <div className="flex gap-5.75 flex-col">

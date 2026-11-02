@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { apiFetch } from "../../service/apiFetch";
+import { apiFetch } from "../../service/api.js";
 import CardUser from "../cards/CardUser";
+import { useDispatch } from "react-redux";
 
 export default function CreateUserModal({ onClose, user = null }) {
+  const dispatch = useDispatch();
   const [form, setForm] = useState({
     primer_nombre: user?.primer_nombre ?? "",
     segundo_nombre: user?.segundo_nombre ?? "",
@@ -26,24 +28,32 @@ export default function CreateUserModal({ onClose, user = null }) {
   const sendForm = async () => {
     let response;
     if (!user) {
-      response = await apiFetch("/api/users/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      response = await apiFetch(
+        "/api/users/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
         },
-        body: JSON.stringify(form),
-      });
+        dispatch,
+      );
     } else {
-      response = await apiFetch("/api/users/update", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      response = await apiFetch(
+        "/api/users/update",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...form,
+            user_id: user.user_id,
+          }),
         },
-        body: JSON.stringify({
-          ...form,
-          user_id: user.user_id,
-        }),
-      });
+        dispatch,
+      );
     }
     alert(response.message);
     onClose();

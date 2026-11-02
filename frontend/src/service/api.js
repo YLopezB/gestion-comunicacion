@@ -16,14 +16,14 @@ export async function apiFetch(url, options = {}, dispatch) {
   dispatch(requestStarted());
 
   try {
-    return await fetch(url, {
+    const result = await fetch(url, {
       ...options,
       credentials: "include",
     });
+    const data = await result.json();
+    return data;
   } finally {
     dispatch(requestFinished());
     releaseQueue();
   }
 }
-
-

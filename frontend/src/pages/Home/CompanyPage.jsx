@@ -3,22 +3,34 @@ import Title from "../../components/Title";
 import Icono from "../../assets/icons/Icono.svg";
 import BtnUpload from "../../components/buttons/BtnUpload";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import BtnCrear from "../../components/buttons/BtnCrear";
+import iconPlus from "../../assets/icons/plus.png";
+import { updateCompany } from "../../features/company/companySlice";
 
 export default function CompanyPage() {
+  const dispatch = useDispatch();
+
   const company = useSelector((state) => state.company);
   const [form, setForm] = useState({
-    name: company.company.name,
-    slogan: company.company.slogan,
-    photo: company.company.photo,
-    logo: company.company.logo,
+    name: company.company?.name ?? "",
+    slogan: company.company?.slogan ?? "",
+    photo: company.company?.photo ?? "",
+    logo: company.company?.logo ?? "",
   });
 
   const handleChange = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const sendForm = async () => {
+    try {
+      const result = await dispatch(updateCompany(form), dispatch).unwrap();
+      alert(result.message || "Empresa actualizada correctamente");
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+      alert(error?.message || error || "Error desconocido");
+    }
   };
 
   return (
@@ -52,13 +64,13 @@ export default function CompanyPage() {
             </p>
             <div className="p-6 flex gap-3 bg-[#F5F4EF] rounded-lg">
               <img
-                src="api/repository/default/logo.png"
-                alt=""
+                src="/api/repository/default/logo.png"
+                alt="logo"
                 className="w-11 h-11"
               />
               <div className="flex flex-col gap-1.25">
-                <p className="text-[15px] text-[#203338]">Nombre empresa</p>
-                <p className="text-[12px] text-[#677779]">Eslogan empresa</p>
+                <p className="text-[15px] text-[#203338]">{form.name}</p>
+                <p className="text-[12px] text-[#677779]">{form.slogan}</p>
               </div>
             </div>
             <div className="flex p-4 bg-[#EEF4F3] gap-2.5 rounded-2xl">
@@ -76,13 +88,11 @@ export default function CompanyPage() {
           </p>
           <div className="flex gap-4 items-center flex-col rounded-lg bg-[#F5F4EF] h-65 justify-center">
             <img
-              src="api/repository/default/logo.png"
+              src="/api/repository/default/logo.png"
               alt=""
               className="w-20 h-20"
             />
-            <p className="text-[#184F5B] text-[16px] font-bold">
-              Nombre empresa
-            </p>
+            <p className="text-[#184F5B] text-[16px] font-bold">{form.name}</p>
           </div>
           <BtnUpload name="Cambiar logo" />
           <p className="text-[11px] text-[#677779]">
@@ -101,11 +111,17 @@ export default function CompanyPage() {
         <p className="text-[14px] text-[#203338] font-semibold">
           Imagen corporativa
         </p>
-        <div className="bg-[#F5F4EF] rounded-lg h-72.5"></div>
+        <div className="bg-[#F5F4EF] rounded-lg h-72.5">
+          <img
+            src="/api/repository/default/index_image.png"
+            alt=""
+            className="w-full h-full object-cover rounded-lg"
+          />
+        </div>
         <BtnUpload name="Cambiar foto organizacional" />
         <p className="text-[11px] text-[#677779]">Recomendado: 1600 × 900 px</p>
       </div>
-      <div className="flex flex-col gap-5 p-6 bg-white rounded-[14px]">
+      {/*      <div className="flex flex-col gap-5 p-6 bg-white rounded-[14px]">
         <p className="text-[11px] text-[#677779]">
           Toca una muestra o escribe su código HEX.
         </p>
@@ -125,7 +141,9 @@ export default function CompanyPage() {
           </div>
           <p className="text-[11px] text-[#677779]">HEX</p>
         </div>
-      </div>
+      </div>*/}
+
+      <BtnCrear icon={iconPlus} name="Guardar Cambios" onClick={sendForm} />
     </div>
   );
 }
